@@ -8,13 +8,15 @@ w = 10
 d = 256
 q = 101
 wt = 0
+index_fingerprints = {}
 
+#lexical_path = '../gitLearning/standard_files/'
 lexical_path = '../gitLearning/standard_files/'
 for file_name in os.listdir(lexical_path):
     i = 0
     h = 1
     times = 0
-    fingerpri = 1000
+    fingerpri = 10000
     locate = 0
     value_kgram = [1]
     file_size = 0
@@ -23,6 +25,8 @@ for file_name in os.listdir(lexical_path):
     kgram_list = []
     kgram = []
     window = []
+    #locate_list_fingerprints = []
+    file_locate_fingerprints = {}
 
     file_size = os.path.getsize(os.path.join(lexical_path,file_name))
     with open(os.path.join(lexical_path,file_name),'r') as files:
@@ -52,12 +56,15 @@ for file_name in os.listdir(lexical_path):
                 fingerpri = window[min_locate]
                 locate = min_locate + window_range
         if fingerprints.get(locate) == None:
-            fingerprints[locate] = fingerpri;
-        fingerpri = 1000
-    
-    wt += 1
-    fingerprint_path = '../gitLearning/fingerprints/'
-    with open(os.path.join(fingerprint_path,str(wt)),'w+') as write_file:
-        print fingerprints
-        write_file.write(str(fingerprints))
+            fingerprints[locate] = fingerpri
+            if index_fingerprints.get(fingerpri) == None:
+                index_fingerprints[fingerpri] = {file_name:[str(locate)]}
+            else:
+                if index_fingerprints[fingerpri].get(file_name):
+                    index_fingerprints[fingerpri].get(file_name).append(str(locate))
+                else:
+                    index_fingerprints[fingerpri][file_name] = [locate]
+        fingerpri = 10000
 
+with open('index_fingerprints','wr') as files:
+    files.write(str(index_fingerprints))
